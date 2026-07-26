@@ -16,4 +16,52 @@
  * service applicatif, pas à cette classe.
  */
 export default class EquipmentRepository {
+  constructor(model) {
+    this.model = model;
+  }
+
+  findAll() {
+    return this.model.find().sort({ createdAt: -1 });
+  }
+
+  findById(id) {
+    return this.model.findById(id);
+  }
+
+  create(data) {
+    return this.model.create(data);
+  }
+
+  update(id, data) {
+    return this.model.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+  }
+
+  delete(id) {
+    return this.model.findByIdAndDelete(id);
+  }
+
+  /**
+   * Diminue la quantité de façon atomique si le stock est suffisant.
+   */
+  reserve(id, quantity) {
+    return this.model.findOneAndUpdate(
+      { _id: id, availableQuantity: { $gte: quantity } },
+      { $inc: { availableQuantity: -quantity } },
+      { new: true, runValidators: true }
+    );
+  }
+
+  /**
+   * Remet la quantité dans l'inventaire.
+   */
+  release(id, quantity) {
+    return this.model.findByIdAndUpdate(
+      id,
+      { $inc: { availableQuantity: quantity } },
+      { new: true, runValidators: true }
+    );
+  }
 }

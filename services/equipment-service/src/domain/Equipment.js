@@ -15,4 +15,43 @@
  * Ne placez ici aucune logique MongoDB, Express ou Axios.
  */
 export default class Equipment {
+  constructor({ name, category, dailyPrice, availableQuantity } = {}) {
+    this.name = name?.trim?.() ?? name;
+    this.category = category?.trim?.() ?? category;
+    this.dailyPrice = Number(dailyPrice);
+    this.availableQuantity = Number(availableQuantity);
+  }
+
+  isValid() {
+    if (!this.name || !this.category) {
+      return { ok: false, message: "Les champs name et category sont requis" };
+    }
+    if (Number.isNaN(this.dailyPrice) || this.dailyPrice < 0) {
+      return { ok: false, message: "dailyPrice doit être un nombre >= 0" };
+    }
+    if (
+      !Number.isInteger(this.availableQuantity) ||
+      this.availableQuantity < 0
+    ) {
+      return {
+        ok: false,
+        message: "availableQuantity doit être un entier >= 0",
+      };
+    }
+    return { ok: true };
+  }
+
+  canReserve(quantity) {
+    const qty = Number(quantity);
+    return Number.isInteger(qty) && qty >= 1 && this.availableQuantity >= qty;
+  }
+
+  toDocument() {
+    return {
+      name: this.name,
+      category: this.category,
+      dailyPrice: this.dailyPrice,
+      availableQuantity: this.availableQuantity,
+    };
+  }
 }
