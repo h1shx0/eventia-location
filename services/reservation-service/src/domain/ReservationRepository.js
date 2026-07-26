@@ -15,4 +15,30 @@
  * Les appels aux autres microservices ne doivent pas être placés ici.
  */
 export default class ReservationRepository {
+  constructor(model) {
+    this.model = model;
+  }
+
+  findAll() {
+    return this.model.find().sort({ createdAt: -1 });
+  }
+
+  findById(id) {
+    return this.model.findById(id);
+  }
+
+  create(data) {
+    return this.model.create(data);
+  }
+
+  update(id, data) {
+    return this.model.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+  }
+
+  delete(id) {
+    return this.model.findByIdAndDelete(id);
+  }
 }
