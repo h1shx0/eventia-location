@@ -13,5 +13,30 @@
  *
  * Cette classe ne doit pas manipuler directement Express ou Mongoose.
  */
+import Notification from "./Notification.js";
+
+export class ServiceError extends Error {
+  constructor(message, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
+
 export default class NotificationService {
+  constructor(repository) {
+    this.repository = repository;
+  }
+
+  async list() {
+    return this.repository.findAllNewestFirst();
+  }
+
+  async create(payload) {
+    const entity = new Notification(payload);
+    const validation = entity.isValid();
+    if (!validation.ok) {
+      throw new ServiceError(validation.message, 400);
+    }
+    return this.repository.create(entity.toDocument());
+  }
 }

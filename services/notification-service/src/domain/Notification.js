@@ -14,4 +14,27 @@
  * Cette classe ne doit pas accéder à MongoDB et ne doit pas envoyer de courriel.
  */
 export default class Notification {
+  constructor({ recipient, message, type } = {}) {
+    this.recipient = recipient?.trim?.() ?? recipient;
+    this.message = message?.trim?.() ?? message;
+    this.type = (type?.trim?.() ?? type) || "INFO";
+  }
+
+  isValid() {
+    if (!this.recipient || !this.message) {
+      return {
+        ok: false,
+        message: "Les champs recipient et message sont requis",
+      };
+    }
+    return { ok: true };
+  }
+
+  toDocument() {
+    return {
+      recipient: this.recipient,
+      message: this.message,
+      type: this.type,
+    };
+  }
 }
