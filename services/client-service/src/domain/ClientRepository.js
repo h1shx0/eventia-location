@@ -14,4 +14,34 @@
  * Cette classe ne doit contenir ni validation métier ni traitement HTTP.
  */
 export default class ClientRepository {
+  constructor(model) {
+    this.model = model;
+  }
+
+  findAll() {
+    return this.model.find().sort({ createdAt: -1 });
+  }
+
+  findById(id) {
+    return this.model.findById(id);
+  }
+
+  findByEmail(email) {
+    return this.model.findOne({ email: String(email).toLowerCase().trim() });
+  }
+
+  create(data) {
+    return this.model.create(data);
+  }
+
+  update(id, data) {
+    return this.model.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+  }
+
+  delete(id) {
+    return this.model.findByIdAndDelete(id);
+  }
 }
